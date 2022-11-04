@@ -5,8 +5,7 @@ import axios from 'axios';
 const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
-  const [isLogin, setIsLogin] = useState(true);
-  console.log("Firebase key: ", process.env.REACT_APP_FIREBASE_API_KEY);
+  const [isLogin, setIsLogin] = useState(false);
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
@@ -21,31 +20,28 @@ const AuthForm = () => {
     if (isLogin) {
 
     } else {
-      console.log(process.env.REACT_APP_FIREBASE_API_KEY);
-      await axios.post(`https://www.localhost:5052/create_user?email=${enteredEmail}&password=${enteredPassword}`);
-      // fetch(
-      //   `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_API_KEY}`,
-      //   {
-      //     method: 'POST',
-      //     body: JSON.stringify({
-      //       email: enteredEmail,
-      //       password: enteredPassword,
-      //       returnSecureToken: true,
-      //     }),
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     }
-      //   }
-      // ).then(res => {
-      //   if (res.ok) {
-      //     // ...
-      //   } else {
-      //     res.json().then(data => {
-      //       // Show an error modal
-      //       console.log(data);
-      //     })
-      //   }
+      console.log(enteredEmail, enteredPassword);
+      // await axios.post(`http://www.localhost:4000/users/create`, {
+      //   email: enteredEmail,
+      //   password: enteredPassword,
       // });
+      const userObject = {
+        email: enteredEmail,
+        password: enteredPassword
+    };
+      axios.post('http://localhost:4000/users/create', userObject)
+      .then((res) => {
+          console.log(res.data)
+      }).catch((error) => {
+          console.log(error)
+      });
+
+      /*         axios.post('http://localhost:4000/users/create', userObject)
+            .then((res) => {
+                console.log(res.data)
+            }).catch((error) => {
+                console.log(error)
+            }); */
     }
   }
 

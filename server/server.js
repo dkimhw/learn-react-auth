@@ -1,17 +1,28 @@
 
 import express from 'express'
-import createUser from 'routes/create_user.js'
+import createUser from './routes/user.js'
+import cors from 'cors'
+import bodyParser from 'body-parser'
 
 
 const app = express();
+app.use(cors());
+// app.use(express.urlencoded({ extended: true })); // Tells Express to parse the post request body data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
+// Index page
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.use('/', createUser);
+// Create user routes
+app.use('/users', createUser);
 
-const PORT = 5052;
+// http://localhost:5015/
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 })
