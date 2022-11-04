@@ -29,12 +29,18 @@ const AuthForm = () => {
         email: enteredEmail,
         password: enteredPassword
     };
-      axios.post('http://localhost:4000/users/create', userObject)
+      let result = await axios.post('http://localhost:4000/users/create', userObject)
       .then((res) => {
-          console.log(res.data)
+          console.log(res.data);
       }).catch((error) => {
-          console.log(error)
+          if (error.response) {
+              alert(error.response.data.message);
+          }
       });
+
+      // if (result.error) {
+      //   alert(result.message);
+      // }
 
       /*         axios.post('http://localhost:4000/users/create', userObject)
             .then((res) => {
