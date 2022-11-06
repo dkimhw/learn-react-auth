@@ -9,8 +9,6 @@ const router = express.Router();
 // Create user
 router.route('/create').post(async (req, res) => {
   const { email, password } = req.body;
-  console.log("Email: ", email);
-  console.log("Password: ", password);
   let errorMsg = '';
   await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.FIREBASE_API_KEY}`,
@@ -45,6 +43,28 @@ router.route('/create').post(async (req, res) => {
   } else {
     return res.status(200).json({ message: 'User created!' });
   }
+});
+
+// Login user
+router.route('/login').post(async (req, res) => {
+  const { email, password } = req.body;
+  let result = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        returnSecureToken: true,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
+  );
+  result = await result.json();
+  console.log(result);
+  return res.json(result);
 });
 
 export default router;

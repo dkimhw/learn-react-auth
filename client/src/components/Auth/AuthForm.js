@@ -5,7 +5,8 @@ import axios from 'axios';
 const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
@@ -16,38 +17,35 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     // Add front-end validation here
-
+    setIsLoading(true);
     if (isLogin) {
-
-    } else {
-      console.log(enteredEmail, enteredPassword);
-      // await axios.post(`http://www.localhost:4000/users/create`, {
-      //   email: enteredEmail,
-      //   password: enteredPassword,
-      // });
       const userObject = {
         email: enteredEmail,
         password: enteredPassword
-    };
-      let result = await axios.post('http://localhost:4000/users/create', userObject)
+      };
+      const response = await axios.post(
+        'http://localhost:4000/users/login', userObject
+      );
+      console.log(response);
+      if (response.data.error) {
+        alert("Either your email or password was incorrect.");
+      }
+      setIsLoading(false);
+    } else {
+      console.log(enteredEmail, enteredPassword);
+      const userObject = {
+        email: enteredEmail,
+        password: enteredPassword
+      };
+      await axios.post('http://localhost:4000/users/create', userObject)
       .then((res) => {
-          console.log(res.data);
+        setIsLoading(false);
       }).catch((error) => {
-          if (error.response) {
-              alert(error.response.data.message);
-          }
+        setIsLoading(false);
+        if (error.response) {
+          alert(error.response.data.message);
+        }
       });
-
-      // if (result.error) {
-      //   alert(result.message);
-      // }
-
-      /*         axios.post('http://localhost:4000/users/create', userObject)
-            .then((res) => {
-                console.log(res.data)
-            }).catch((error) => {
-                console.log(error)
-            }); */
     }
   }
 
@@ -64,7 +62,8 @@ const AuthForm = () => {
           <input type='password' id='password' required ref={passwordInputRef} />
         </div>
         <div className={classes.actions}>
-          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          {!isLoading &&<button>{isLogin ? 'Login' : 'Create Account'}</button> }
+          {isLoading && <p>Sending Request...</p> }
           <button
             type='button'
             className={classes.toggle}
