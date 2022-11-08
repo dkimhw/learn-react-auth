@@ -67,4 +67,27 @@ router.route('/login').post(async (req, res) => {
   return res.json(result);
 });
 
+// Change password
+router.route('/change-password').post(async (req, res) => {
+  const { idToken, password } = req.body;
+  let result = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${process.env.FIREBASE_API_KEY}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        idToken: idToken,
+        password: password,
+        returnSecureToken: true,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
+  );
+  result = await result.json();
+  console.log(result);
+  return res.json(result);
+});
+
+
 export default router;

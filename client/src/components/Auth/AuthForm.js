@@ -1,12 +1,18 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import classes from './AuthForm.module.css';
 import axios from 'axios';
+import AuthContext from '../../store/auth-context';
+import { useHistory } from 'react-router-dom'
 
 const AuthForm = () => {
+  const history = useHistory();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const authCtx = useContext(AuthContext);
+
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
@@ -30,6 +36,12 @@ const AuthForm = () => {
       if (response.data.error) {
         alert("Either your email or password was incorrect.");
       }
+
+      if (response.data.idToken) {
+        authCtx.login(response.data.idToken);
+        history.replace('/');
+      }
+
       setIsLoading(false);
     } else {
       console.log(enteredEmail, enteredPassword);
